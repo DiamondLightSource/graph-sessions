@@ -160,6 +160,7 @@ dependencies = [
  "async-trait",
  "base64",
  "bytes",
+ "chrono",
  "fnv",
  "futures-util",
  "handlebars",
@@ -563,8 +564,10 @@ checksum = "8eaf5903dcbc0a39312feb77df2ff4c76387d591b9fc7b04a238dcf8bb62639a"
 dependencies = [
  "android-tzdata",
  "iana-time-zone",
+ "js-sys",
  "num-traits",
  "serde",
+ "wasm-bindgen",
  "windows-targets 0.52.4",
 ]
 
@@ -2468,6 +2471,7 @@ dependencies = [
  "async-graphql-axum",
  "axum 0.7.4",
  "built",
+ "chrono",
  "clap",
  "dotenvy",
  "models",
