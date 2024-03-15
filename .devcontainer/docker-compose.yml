@@ -1,0 +1,33 @@
+version: "3.8"
+
+services:
+  sessions:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ..:/workspace:cached,z
+    command: sleep infinity
+    environment:
+      DATABASE_URL: mysql://root:rootpassword@ispyb/ispyb_build
+      LOG_LEVEL: DEBUG
+
+  opa:
+    image: docker.io/openpolicyagent/opa:0.59.0
+    restart: unless-stopped
+    command: >
+      run
+      --server
+      --config-file /config.yml
+      --watch
+      /policy
+    volumes:
+      - ./opa.yml:/config.yml:cached,z
+      - ../policy/:/policy:cached,z
+    env_file: opa.env
+
+  ispyb:
+    image: ghcr.io/diamondlightsource/ispyb-database:v3.0.0
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: rootpassword

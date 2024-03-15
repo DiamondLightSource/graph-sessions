@@ -1,0 +1,22 @@
+{
+    "name": "Sessions",
+    "dockerComposeFile": "docker-compose.yml",
+    "service": "sessions",
+    "customizations": {
+      "vscode": {
+        "extensions": [
+          "ms-kubernetes-tools.vscode-kubernetes-tools",
+          "rust-lang.rust-analyzer",
+          "tamasfe.even-better-toml",
+          "tsandall.opa"
+        ]
+      }
+    },
+    "features": {
+      "ghcr.io/devcontainers/features/common-utils:2.4.2": {
+        "username": "none",
+        "upgradePackages": false
+      }
+    },
+    "workspaceFolder": "/workspace"
+  }

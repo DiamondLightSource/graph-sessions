@@ -1,0 +1,14 @@
+services:
+  bundler:
+    url: http://authz.diamond.ac.uk
+    credentials:
+      bearer:
+        token: ${BUNDLER_TOKEN}
+
+bundles:
+  permissionables:
+    service: bundler
+    resource: bundle.tar.gz
+    polling:
+      min_delay_seconds: 10
+      max_delay_seconds: 60
