@@ -1,3 +1,7 @@
 [workspace]
 default-members = ["sessions"]
-members = ["sessions"]
+members = ["models", "sessions"]
+resolver = "2"
+
+[workspace.dependencies]
+sea-orm = { version = "0.12.14", features = ["sqlx-mysql"] }
