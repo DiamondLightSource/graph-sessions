@@ -20,4 +20,4 @@ jobs:
         run: touch .devcontainer/opa.env
 
       - name: Build dev container
-        uses: devcontainers/ci@v0.3.1900000347
+        uses: devcontainers/ci@v0.3.1900000348
