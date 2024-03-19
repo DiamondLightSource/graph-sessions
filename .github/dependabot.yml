@@ -4,13 +4,27 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    groups:
+      minor:
+        update-types:
+          - minor
+          - patch
 
   - package-ecosystem: devcontainers
-    directory: "/"
+    directory: /
     schedule:
       interval: weekly
+    groups:
+      minor:
+        update-types:
+          - minor
+          - patch
 
   - package-ecosystem: cargo
     directory: /
     schedule:
       interval: weekly
+    groups:
+      patch:
+        update-types:
+          - patch
