@@ -9,7 +9,7 @@ mod built_info;
 mod graphql;
 
 use async_graphql::{extensions::Tracing, http::GraphiQLSource};
-use async_graphql_axum::{GraphQL, GraphQLSubscription};
+use async_graphql_axum::GraphQL;
 use axum::{response::Html, routing::get, Router};
 use clap::Parser;
 use graphql::{root_schema_builder, RootSchema};
@@ -103,21 +103,14 @@ async fn setup_database(database_url: Url) -> Result<DatabaseConnection, Transac
 fn setup_router(schema: RootSchema) -> Router {
     #[allow(clippy::missing_docs_in_private_items)]
     const GRAPHQL_ENDPOINT: &str = "/";
-    #[allow(clippy::missing_docs_in_private_items)]
-    const SUBSCRIPTION_ENDPOINT: &str = "/ws";
 
-    Router::new()
-        .route(
-            GRAPHQL_ENDPOINT,
-            get(Html(
-                GraphiQLSource::build()
-                    .endpoint(GRAPHQL_ENDPOINT)
-                    .subscription_endpoint(SUBSCRIPTION_ENDPOINT)
-                    .finish(),
-            ))
-            .post_service(GraphQL::new(schema.clone())),
-        )
-        .route_service(SUBSCRIPTION_ENDPOINT, GraphQLSubscription::new(schema))
+    Router::new().route(
+        GRAPHQL_ENDPOINT,
+        get(Html(
+            GraphiQLSource::build().endpoint(GRAPHQL_ENDPOINT).finish(),
+        ))
+        .post_service(GraphQL::new(schema.clone())),
+    )
 }
 
 /// Serves the endpoints on the specified port forever

@@ -11,7 +11,7 @@ async-graphql = { version = "7.0.2", default-features = false, features = [
     "tracing",
 ] }
 async-graphql-axum = { version = "7.0.2" }
-axum = { version = "0.7.4", features = ["ws"] }
+axum = { version = "0.7.4" }
 chrono = { version = "0.4.35" }
 clap = { version = "4.5.2", features = ["derive", "env"] }
 dotenvy = { version = "0.15.7" }
