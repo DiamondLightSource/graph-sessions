@@ -14,7 +14,7 @@ pub type RootSchema = Schema<RootQuery, EmptyMutation, EmptySubscription>;
 
 /// A schema builder for the service
 pub fn root_schema_builder() -> SchemaBuilder<RootQuery, EmptyMutation, EmptySubscription> {
-    Schema::build(RootQuery, EmptyMutation, EmptySubscription)
+    Schema::build(RootQuery, EmptyMutation, EmptySubscription).enable_federation()
 }
 
 /// A Beamline Session
@@ -107,5 +107,16 @@ impl RootQuery {
                 session,
                 proposal: proposal.map(Proposal),
             }))
+    }
+
+    /// Retrieves a Beamline Session
+    #[graphql(entity)]
+    async fn router_session(
+        &self,
+        ctx: &Context<'_>,
+        proposal: u32,
+        visit: u32,
+    ) -> Result<Option<Session>, async_graphql::Error> {
+        self.session(ctx, proposal, visit).await
     }
 }
