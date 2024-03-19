@@ -17,7 +17,7 @@ use crate::{
     opa::OpaClient,
     route_handlers::GraphQLHandler,
 };
-use async_graphql::{extensions::Tracing, http::GraphiQLSource};
+use async_graphql::{extensions::Tracing, http::GraphiQLSource, SDLExportOptions};
 use axum::{response::Html, routing::get, Router};
 use clap::Parser;
 use opentelemetry_otlp::WithExportConfig;
@@ -93,7 +93,7 @@ async fn main() {
         }
         Cli::Schema(args) => {
             let schema = root_schema_builder().finish();
-            let schema_string = schema.sdl();
+            let schema_string = schema.sdl_with_options(SDLExportOptions::new().federation());
             if let Some(path) = args.path {
                 let mut file = File::create(path).unwrap();
                 file.write_all(schema_string.as_bytes()).unwrap();
