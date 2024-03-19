@@ -15,10 +15,22 @@ struct Table<'a> {
     columns: &'a [&'a str],
 }
 
-const TABLES_SPECS: &[&Table] = &[&Table {
-    name: "BLSession",
-    columns: &["sessionId", "startDate", "endDate", "visit_number"],
-}];
+const TABLES_SPECS: &[&Table] = &[
+    &Table {
+        name: "BLSession",
+        columns: &[
+            "sessionId",
+            "proposalId",
+            "startDate",
+            "endDate",
+            "visit_number",
+        ],
+    },
+    &Table {
+        name: "Proposal",
+        columns: &["proposalId", "proposalNumber"],
+    },
+];
 
 fn main() {
     tokio::runtime::Builder::new_current_thread()
