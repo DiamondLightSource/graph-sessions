@@ -7,12 +7,19 @@
 mod built_info;
 /// GraphQL resolvers
 mod graphql;
+/// Open Policy Agent helpers
+mod opa;
+/// An [`axum::handler::Handler`] for GraphQL
+mod route_handlers;
 
+use crate::{
+    graphql::{root_schema_builder, RootSchema},
+    opa::OpaClient,
+    route_handlers::GraphQLHandler,
+};
 use async_graphql::{extensions::Tracing, http::GraphiQLSource};
-use async_graphql_axum::GraphQL;
 use axum::{response::Html, routing::get, Router};
 use clap::Parser;
-use graphql::{root_schema_builder, RootSchema};
 use opentelemetry_otlp::WithExportConfig;
 use sea_orm::{ConnectOptions, Database, DatabaseConnection, DbErr, TransactionError};
 use std::{
@@ -30,6 +37,7 @@ use url::Url;
 /// A service providing Beamline Session data from ISPyB
 #[derive(Debug, Parser)]
 #[command(author, version, about, long_about=None)]
+#[allow(clippy::large_enum_variant)]
 enum Cli {
     /// Starts a webserver serving the GraphQL API
     Serve(ServeArgs),
@@ -46,6 +54,9 @@ struct ServeArgs {
     /// The URL of the ISPyB instance which should be connected to
     #[arg(long, env = "DATABASE_URL")]
     database_url: Url,
+    /// The URL of the Open Policy Agent instance used for authorization
+    #[arg(long, env = "OPA_URL")]
+    opa_url: Url,
     /// The [`tracing::Level`] to log at
     #[arg(long, env = "LOG_LEVEL", default_value_t = tracing::Level::INFO)]
     log_level: tracing::Level,
@@ -71,9 +82,11 @@ async fn main() {
         Cli::Serve(args) => {
             setup_telemetry(args.log_level, args.otel_collector_url).unwrap();
             let database = setup_database(args.database_url).await.unwrap();
+            let opa_client = OpaClient::new(args.opa_url);
             let schema = root_schema_builder()
                 .extension(Tracing)
                 .data(database)
+                .data(opa_client)
                 .finish();
             let router = setup_router(schema);
             serve(router, args.port).await.unwrap();
@@ -109,7 +122,7 @@ fn setup_router(schema: RootSchema) -> Router {
         get(Html(
             GraphiQLSource::build().endpoint(GRAPHQL_ENDPOINT).finish(),
         ))
-        .post_service(GraphQL::new(schema.clone())),
+        .post(GraphQLHandler::new(schema)),
     )
 }
 

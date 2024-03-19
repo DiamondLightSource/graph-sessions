@@ -1,3 +1,4 @@
+use crate::opa::{OpaClient, OpaInput};
 use async_graphql::{
     Context, EmptyMutation, EmptySubscription, Object, Schema, SchemaBuilder, SimpleObject,
 };
@@ -6,6 +7,7 @@ use models::{bl_session, proposal};
 use sea_orm::{
     ColumnTrait, Condition, DatabaseConnection, EntityTrait, JoinType, QueryFilter, QuerySelect,
 };
+use serde::Serialize;
 
 /// The GraphQL schema exposed by the service
 pub type RootSchema = Schema<RootQuery, EmptyMutation, EmptySubscription>;
@@ -40,6 +42,15 @@ impl From<bl_session::Model> for Session {
 #[derive(Debug, Clone, Default)]
 pub struct RootQuery;
 
+/// Parameters required to
+#[derive(Debug, Serialize)]
+struct OpaSessionParameters {
+    /// The proposal of the session being requested
+    proposal: u32,
+    /// The visit number of the session being requested
+    visit: u32,
+}
+
 #[Object]
 impl RootQuery {
     /// Retrieves a Beamline Session
@@ -50,6 +61,12 @@ impl RootQuery {
         visit: u32,
     ) -> Result<Option<Session>, async_graphql::Error> {
         let database = ctx.data::<DatabaseConnection>()?;
+        ctx.data::<OpaClient>()?
+            .decide(OpaInput::new(
+                ctx,
+                OpaSessionParameters { proposal, visit },
+            )?)
+            .await?;
         Ok(bl_session::Entity::find()
             .join_rev(
                 JoinType::InnerJoin,

@@ -10,6 +10,7 @@ services:
     command: sleep infinity
     environment:
       DATABASE_URL: mysql://root:rootpassword@ispyb/ispyb_build
+      OPA_URL: http://opa:8181
       LOG_LEVEL: DEBUG
 
   opa:
@@ -25,6 +26,8 @@ services:
       - ./opa.yml:/config.yml:cached,z
       - ../policy/:/policy:cached,z
     env_file: opa.env
+    environment:
+      JWKS_ENDPOINT: https://authn.diamond.ac.uk/realms/master/protocol/openid-connect/certs
 
   ispyb:
     image: ghcr.io/diamondlightsource/ispyb-database:v3.0.0
