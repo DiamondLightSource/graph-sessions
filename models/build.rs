@@ -28,7 +28,7 @@ const TABLES_SPECS: &[&Table] = &[
     },
     &Table {
         name: "Proposal",
-        columns: &["proposalId", "proposalNumber"],
+        columns: &["proposalId", "proposalCode", "proposalNumber"],
     },
 ];
 
