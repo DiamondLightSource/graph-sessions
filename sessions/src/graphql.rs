@@ -10,16 +10,16 @@ use serde::Serialize;
 use tracing::instrument;
 
 /// The GraphQL schema exposed by the service
-pub type RootSchema = Schema<RootQuery, EmptyMutation, EmptySubscription>;
+pub type RootSchema = Schema<Query, EmptyMutation, EmptySubscription>;
 
 /// A schema builder for the service
-pub fn root_schema_builder() -> SchemaBuilder<RootQuery, EmptyMutation, EmptySubscription> {
-    Schema::build(RootQuery, EmptyMutation, EmptySubscription)
+pub fn root_schema_builder() -> SchemaBuilder<Query, EmptyMutation, EmptySubscription> {
+    Schema::build(Query, EmptyMutation, EmptySubscription).enable_federation()
 }
 
 /// A Beamline Session
 #[derive(Debug, SimpleObject)]
-#[graphql(complex)]
+#[graphql(complex, unresolvable = "id")]
 struct Session {
     /// The underlying database model
     #[graphql(skip)]
@@ -30,7 +30,11 @@ struct Session {
 
 #[ComplexObject]
 impl Session {
-    async fn visit_number(&self, _ctx: &Context<'_>) -> u32 {
+    async fn id(&self, _ctx: &Context<'_>) -> u32 {
+        self.session.session_id
+    }
+
+    async fn visit(&self, _ctx: &Context<'_>) -> u32 {
         self.session.visit_number.unwrap_or_default()
     }
 
@@ -66,7 +70,7 @@ impl Proposal {
 
 /// The root query of the service
 #[derive(Debug, Clone, Default)]
-pub struct RootQuery;
+pub struct Query;
 
 /// Parameters required to
 #[derive(Debug, Serialize)]
@@ -78,7 +82,7 @@ struct OpaSessionParameters {
 }
 
 #[Object]
-impl RootQuery {
+impl Query {
     /// Retrieves a Beamline Session
     #[instrument(name = "query_session", skip(ctx))]
     async fn session(
