@@ -1,13 +1,13 @@
 use crate::opa::{OpaClient, OpaInput};
 use async_graphql::{
-    Context, EmptyMutation, EmptySubscription, Object, Schema, SchemaBuilder, SimpleObject,
+    ComplexObject, Context, EmptyMutation, EmptySubscription, Object, Schema, SchemaBuilder,
+    SimpleObject,
 };
 use chrono::{DateTime, Utc};
 use models::{bl_session, proposal};
-use sea_orm::{
-    ColumnTrait, Condition, DatabaseConnection, EntityTrait, JoinType, QueryFilter, QuerySelect,
-};
+use sea_orm::{ColumnTrait, Condition, DatabaseConnection, EntityTrait, QueryFilter};
 use serde::Serialize;
+use tracing::instrument;
 
 /// The GraphQL schema exposed by the service
 pub type RootSchema = Schema<RootQuery, EmptyMutation, EmptySubscription>;
@@ -19,22 +19,48 @@ pub fn root_schema_builder() -> SchemaBuilder<RootQuery, EmptyMutation, EmptySub
 
 /// A Beamline Session
 #[derive(Debug, SimpleObject)]
+#[graphql(complex)]
 struct Session {
-    /// The number of session within the Proposal
-    visit_number: Option<u32>,
-    /// The date and time at which the Session began
-    start: Option<DateTime<Utc>>,
-    /// The date and time at which the Session ended
-    end: Option<DateTime<Utc>>,
+    /// The underlying database model
+    #[graphql(skip)]
+    session: bl_session::Model,
+    /// The proposal information
+    proposal: Option<Proposal>,
 }
 
-impl From<bl_session::Model> for Session {
-    fn from(value: bl_session::Model) -> Self {
-        Self {
-            visit_number: value.visit_number,
-            start: value.start_date.map(|date| date.and_utc()),
-            end: value.end_date.map(|date| date.and_utc()),
-        }
+#[ComplexObject]
+impl Session {
+    async fn visit_number(&self, _ctx: &Context<'_>) -> u32 {
+        self.session.visit_number.unwrap_or_default()
+    }
+
+    async fn start(&self, _ctx: &Context<'_>) -> Option<DateTime<Utc>> {
+        self.session.start_date.map(|date| date.and_utc())
+    }
+
+    async fn end(&self, _ctx: &Context<'_>) -> Option<DateTime<Utc>> {
+        self.session.end_date.map(|date| date.and_utc())
+    }
+}
+
+/// An Experimental Proposal, containing numerous sessions
+#[derive(Debug)]
+struct Proposal(proposal::Model);
+
+#[Object]
+impl Proposal {
+    async fn code(&self, _ctx: &Context<'_>) -> &Option<String> {
+        &self.0.proposal_code
+    }
+
+    /// A unique number identifying the Proposal
+    async fn number(&self, _ctx: &Context<'_>) -> Result<Option<u32>, async_graphql::Error> {
+        Ok(self
+            .0
+            .proposal_number
+            .as_ref()
+            .map(|num| num.parse())
+            .transpose()?)
     }
 }
 
@@ -54,6 +80,7 @@ struct OpaSessionParameters {
 #[Object]
 impl RootQuery {
     /// Retrieves a Beamline Session
+    #[instrument(name = "query_session", skip(ctx))]
     async fn session(
         &self,
         ctx: &Context<'_>,
@@ -68,13 +95,7 @@ impl RootQuery {
             )?)
             .await?;
         Ok(bl_session::Entity::find()
-            .join_rev(
-                JoinType::InnerJoin,
-                proposal::Entity::has_many(bl_session::Entity)
-                    .from(proposal::Column::ProposalId)
-                    .to(bl_session::Column::ProposalId)
-                    .into(),
-            )
+            .find_also_related(proposal::Entity)
             .filter(
                 Condition::all()
                     .add(bl_session::Column::VisitNumber.eq(visit))
@@ -82,6 +103,9 @@ impl RootQuery {
             )
             .one(database)
             .await?
-            .map(Session::from))
+            .map(|(session, proposal)| Session {
+                session,
+                proposal: proposal.map(Proposal),
+            }))
     }
 }
