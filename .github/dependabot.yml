@@ -5,6 +5,9 @@ updates:
     schedule:
       interval: weekly
     groups:
+      github-artifacts:
+        patterns:
+          - actions/*-artifact
       minor:
         update-types:
           - minor
