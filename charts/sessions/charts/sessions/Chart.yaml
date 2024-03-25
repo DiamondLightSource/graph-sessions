@@ -1,0 +1,8 @@
+apiVersion: v2
+name: sessions
+description: A service providing beamline session information as part of the graph federation
+type: application
+
+version: 0.1.0
+
+appVersion: 0.1.0-rc3
