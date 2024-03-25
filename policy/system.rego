@@ -19,13 +19,13 @@ allow if {
 # Allow if on proposal which contains session
 allow if {
 	some proposal_number in data.diamond.data.subjects[token.claims.fedid].proposals
-	proposal_number == input.proposal
+	proposal_number == input.parameters.proposal
 }
 
 # Allow if directly on session
 allow if {
 	some session_id in data.diamond.data.subjects[token.claims.fedid].sessions
 	session := data.diamond.data.sessions[session_id]
-	session.proposal_number == input.proposal
-	session.visit_number == input.visit
+	session.proposal_number == input.parameters.proposal
+	session.visit_number == input.parameters.visit
 }
