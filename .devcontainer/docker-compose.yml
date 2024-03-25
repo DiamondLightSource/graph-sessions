@@ -27,7 +27,7 @@ services:
       - ../policy/:/policy:cached,z
     env_file: opa.env
     environment:
-      SKIP_AUTHORIZATION: "true"
+      JWKS_ENDPOINT: https://authn.diamond.ac.uk/realms/master/protocol/openid-connect/certs
 
   ispyb:
     image: ghcr.io/diamondlightsource/ispyb-database:v3.0.0
