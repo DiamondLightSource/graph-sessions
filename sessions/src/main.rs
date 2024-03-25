@@ -31,7 +31,7 @@ use std::{
     time::Duration,
 };
 use tokio::net::TcpListener;
-use tracing::instrument;
+use tracing::{info, instrument};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 use url::Url;
 
@@ -108,8 +108,12 @@ async fn main() {
 /// Creates a connection pool to access the database
 #[instrument(skip(database_url))]
 async fn setup_database(database_url: Url) -> Result<DatabaseConnection, TransactionError<DbErr>> {
-    let connection_options = ConnectOptions::new(database_url.to_string());
+    info!("Connecting to database at {database_url}");
+    let connection_options = ConnectOptions::new(database_url.to_string())
+        .sqlx_logging_level(tracing::log::LevelFilter::Debug)
+        .to_owned();
     let connection = Database::connect(connection_options).await?;
+    info!("Database connection established: {connection:?}");
     Ok(connection)
 }
 
@@ -134,7 +138,7 @@ fn setup_router(schema: RootSchema) -> Router {
 async fn serve(router: Router, port: u16) -> Result<(), std::io::Error> {
     let socket_addr = SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::UNSPECIFIED, port));
     let listener = TcpListener::bind(socket_addr).await?;
-    println!("GraphiQL IDE: {}", socket_addr);
+    println!("Serving API & GraphQL UI at {}", socket_addr);
     axum::serve(listener, router.into_make_service()).await?;
     Ok(())
 }

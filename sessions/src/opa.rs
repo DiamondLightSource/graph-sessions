@@ -1,6 +1,6 @@
 use axum_extra::headers::{authorization::Bearer, Authorization};
 use serde::{Deserialize, Serialize};
-use tracing::instrument;
+use tracing::{info, instrument};
 use url::Url;
 
 /// Parametrers required by OPA to make the policy decision
@@ -44,6 +44,7 @@ pub struct OpaClient {
 impl OpaClient {
     /// Creates a new [`OpaClient`] bound to the provided endpoint [`Url`]
     pub fn new(endpoint: Url) -> Self {
+        info!("Setting up OPA client at {endpoint}");
         Self {
             client: reqwest::Client::new(),
             endpoint,

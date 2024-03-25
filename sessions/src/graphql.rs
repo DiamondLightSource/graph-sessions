@@ -7,7 +7,7 @@ use chrono::{DateTime, Utc};
 use models::{bl_session, proposal};
 use sea_orm::{ColumnTrait, Condition, DatabaseConnection, EntityTrait, QueryFilter};
 use serde::Serialize;
-use tracing::instrument;
+use tracing::{info, instrument};
 
 /// The GraphQL schema exposed by the service
 pub type RootSchema = Schema<Query, EmptyMutation, EmptySubscription>;
@@ -98,6 +98,7 @@ impl Query {
                 OpaSessionParameters { proposal, visit },
             )?)
             .await?;
+        info!("Retrieving session");
         Ok(bl_session::Entity::find()
             .find_also_related(proposal::Entity)
             .filter(
