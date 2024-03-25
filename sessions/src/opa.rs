@@ -1,5 +1,6 @@
 use axum_extra::headers::{authorization::Bearer, Authorization};
 use serde::{Deserialize, Serialize};
+use tracing::instrument;
 use url::Url;
 
 /// Parametrers required by OPA to make the policy decision
@@ -50,14 +51,22 @@ impl OpaClient {
     }
 
     /// Queries OPA with the [`OpaInput`] and returns the [`Decision`]
+    #[instrument(skip(input))]
     async fn query<P: Serialize>(&self, input: OpaInput<P>) -> Result<Decision, reqwest::Error> {
-        self.client
+        let mut request = self
+            .client
             .post(self.endpoint.clone())
             .json(&input)
-            .send()
-            .await?
-            .json()
-            .await
+            .build()?;
+
+        opentelemetry::global::get_text_map_propagator(|propagator| {
+            propagator.inject_context(
+                &opentelemetry::Context::current(),
+                &mut opentelemetry_http::HeaderInjector(request.headers_mut()),
+            )
+        });
+
+        self.client.execute(request).await?.json().await
     }
 
     /// Queries OPA with the [`OpaInput`] and returns a [`Result`]

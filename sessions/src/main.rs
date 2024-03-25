@@ -17,8 +17,9 @@ use crate::{
     opa::OpaClient,
     route_handlers::GraphQLHandler,
 };
-use async_graphql::{extensions::Tracing, http::GraphiQLSource, SDLExportOptions};
+use async_graphql::{http::GraphiQLSource, SDLExportOptions};
 use axum::{response::Html, routing::get, Router};
+use axum_tracing_opentelemetry::middleware::{OtelAxumLayer, OtelInResponseLayer};
 use clap::Parser;
 use opentelemetry_otlp::WithExportConfig;
 use sea_orm::{ConnectOptions, Database, DatabaseConnection, DbErr, TransactionError};
@@ -84,7 +85,7 @@ async fn main() {
             let database = setup_database(args.database_url).await.unwrap();
             let opa_client = OpaClient::new(args.opa_url);
             let schema = root_schema_builder()
-                .extension(Tracing)
+                .extension(async_graphql::extensions::Tracing)
                 .data(database)
                 .data(opa_client)
                 .finish();
@@ -117,13 +118,16 @@ fn setup_router(schema: RootSchema) -> Router {
     #[allow(clippy::missing_docs_in_private_items)]
     const GRAPHQL_ENDPOINT: &str = "/";
 
-    Router::new().route(
-        GRAPHQL_ENDPOINT,
-        get(Html(
-            GraphiQLSource::build().endpoint(GRAPHQL_ENDPOINT).finish(),
-        ))
-        .post(GraphQLHandler::new(schema)),
-    )
+    Router::new()
+        .route(
+            GRAPHQL_ENDPOINT,
+            get(Html(
+                GraphiQLSource::build().endpoint(GRAPHQL_ENDPOINT).finish(),
+            ))
+            .post(GraphQLHandler::new(schema)),
+        )
+        .layer(OtelInResponseLayer)
+        .layer(OtelAxumLayer::default())
 }
 
 /// Serves the endpoints on the specified port forever
