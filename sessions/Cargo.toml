@@ -8,12 +8,11 @@ anyhow = { version = "1.0.81" }
 async-graphql = { version = "7.0.3", default-features = false, features = [
     "chrono",
     "graphiql",
-    "tracing",
 ] }
 async-graphql-axum = { version = "7.0.3" }
 axum = { version = "0.7.5" }
 axum-extra = { version = "0.9.3", features = ["typed-header"] }
-axum-tracing-opentelemetry = "0.18.0"
+axum-tracing-opentelemetry = { version = "0.18.0" }
 chrono = { version = "0.4.35" }
 clap = { version = "4.5.3", features = ["derive", "env"] }
 dotenvy = { version = "0.15.7" }

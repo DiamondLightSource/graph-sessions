@@ -85,7 +85,6 @@ async fn main() {
             let database = setup_database(args.database_url).await.unwrap();
             let opa_client = OpaClient::new(args.opa_url);
             let schema = root_schema_builder()
-                .extension(async_graphql::extensions::Tracing)
                 .data(database)
                 .data(opa_client)
                 .finish();
