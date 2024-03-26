@@ -160,6 +160,9 @@ fn setup_telemetry(
         ),
     ]);
     let (metrics_layer, tracing_layer) = if let Some(otel_collector_url) = otel_collector_url {
+        opentelemetry::global::set_text_map_propagator(
+            opentelemetry_sdk::propagation::TraceContextPropagator::default(),
+        );
         (
             Some(tracing_opentelemetry::MetricsLayer::new(
                 opentelemetry_otlp::new_pipeline()
