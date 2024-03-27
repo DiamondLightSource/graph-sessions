@@ -1,9 +1,9 @@
 dependencies:
-  - name: sessions
-    repository: ""
-    version: 0.1.0
-  - name: opa
-    repository: oci://ghcr.io/diamondlightsource/authz-opa
-    version: 0.1.1
-digest: sha256:95017c41b0ce1a885a24cbf1cb84ec8c933fe7cc0da54ec8ab8feb83067ee3a4
-generated: "2024-03-15T14:42:56.472367672Z"
+- name: sessions
+  repository: ""
+  version: 0.1.0
+- name: opa
+  repository: oci://ghcr.io/diamondlightsource/authz-opa
+  version: 0.1.2
+digest: sha256:9ad800fa04a497872d62359d054e3047013b14e788c1f2cb70934b4fb858945a
+generated: "2024-03-27T17:59:08.471985688Z"
