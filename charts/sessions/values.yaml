@@ -2,7 +2,7 @@ sessions:
   enabled: true
   logLevel: Trace
   database:
-    host: mysql://ispyb-mariadb-galera-headless
+    host: mysql://ispyb-mariadb-galera-headless/ispyb
     user: ispyb_ro
     password:
       secretName: ispyb
