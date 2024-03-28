@@ -35,7 +35,7 @@ opa:
             max_delay_seconds: 60
         sessions-policy:
           service: ghcr
-          resource: ghcr.io/diamondlightsource/graph-sessions-policy:0.1.0-rc6
+          resource: ghcr.io/diamondlightsource/graph-sessions-policy:0.1.0-rc7
           polling:
             min_delay_seconds: 30
             max_delay_seconds: 120
