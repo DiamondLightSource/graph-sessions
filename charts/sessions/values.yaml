@@ -2,7 +2,7 @@ sessions:
   enabled: true
   logLevel: Debug
   database:
-    host: mysql://ispybdbproxy.diamond.ac.uk:4306/ispyb
+    host: mysql://ispyb-mariadb-galera-headless
     user: ispyb_ro
     password:
       secretName: ispyb
