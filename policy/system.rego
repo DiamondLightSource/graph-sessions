@@ -10,6 +10,10 @@ main := {"allow": allow}
 
 default allow := false
 
+allow if {
+	"super_admin" in data.diamond.data.subjects[token.claims.fedid].permissions
+}
+
 # Allow if subject on proposal which contains session
 allow if {
 	some proposal_number in data.diamond.data.subjects[token.claims.fedid].proposals
