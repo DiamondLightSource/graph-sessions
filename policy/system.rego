@@ -66,6 +66,36 @@ allow if {
 	"b24_admin" in data.diamond.data.subjects[token.claims.fedid].permissions
 }
 
+# Allow if on session on i02-1 (VMXm) and subject has mx_admin permission
+allow if {
+	session.beamline == "i02"
+	"mx_admin" in data.diamond.data.subjects[token.claims.fedid].permissions
+}
+
+# Allow if on session on i02-2 (VMXi) and subject has mx_admin permission
+allow if {
+	session.beamline == "i02-2"
+	"mx_admin" in data.diamond.data.subjects[token.claims.fedid].permissions
+}
+
+# Allow if on session on i03 and subject has mx_admin permission
+allow if {
+	session.beamline == "i03"
+	"mx_admin" in data.diamond.data.subjects[token.claims.fedid].permissions
+}
+
+# Allow if on session on i04 and subject has mx_admin permission
+allow if {
+	session.beamline == "i04"
+	"mx_admin" in data.diamond.data.subjects[token.claims.fedid].permissions
+}
+
+# Allow if on session on i04-1 and subject has mx_admin permission
+allow if {
+	session.beamline == "i04-1"
+	"mx_admin" in data.diamond.data.subjects[token.claims.fedid].permissions
+}
+
 # Allow if on session on i05 and subject has i05_admin permission
 allow if {
 	session.beamline == "i05"
@@ -148,6 +178,18 @@ allow if {
 allow if {
 	session.beamline == "i21"
 	"i21_admin" in data.diamond.data.subjects[token.claims.fedid].permissions
+}
+
+# Allow if on session on i23 and subject has mx_admin permission
+allow if {
+	session.beamline == "i23"
+	"mx_admin" in data.diamond.data.subjects[token.claims.fedid].permissions
+}
+
+# Allow if on session on i24 and subject has mx_admin permission
+allow if {
+	session.beamline == "i24"
+	"mx_admin" in data.diamond.data.subjects[token.claims.fedid].permissions
 }
 
 # Allow if on session on k11 and subject has i11_admin permission
