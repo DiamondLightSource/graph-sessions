@@ -19,8 +19,10 @@ jwks_url := concat("?", [jwks_endpoint, urlquery.encode_object({"kid": jwt_heade
 
 jwks := fetch_jwks(jwks_url).raw_body
 
-verified := unverified if {
-	io.jwt.verify_rs256(input.token, jwks)
-}
+valid := io.jwt.decode_verify(input.token, {
+	"cert": jwks,
+	"iss": "https://authn.diamond.ac.uk/realms/master",
+	"time": time.now_ns(),
+})
 
-claims := verified[1]
+claims := valid[2]
