@@ -22,7 +22,7 @@ jwks := fetch_jwks(jwks_url).raw_body
 valid := io.jwt.decode_verify(input.token, {
 	"cert": jwks,
 	"iss": "https://authn.diamond.ac.uk/realms/master",
-	"time": time.now_ns(),
+	"aud": "account",
 })
 
 claims := valid[2]
