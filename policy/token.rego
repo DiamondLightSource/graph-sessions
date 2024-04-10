@@ -6,7 +6,7 @@ fetch_jwks(url) := http.send({
 	"url": jwks_url,
 	"method": "GET",
 	"force_cache": true,
-	"force_cache_duration_seconds": 3600,
+	"force_cache_duration_seconds": 86400,
 })
 
 jwks_endpoint := opa.runtime().env.JWKS_ENDPOINT
