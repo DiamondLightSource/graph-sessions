@@ -88,14 +88,18 @@ impl Query {
     async fn session(
         &self,
         ctx: &Context<'_>,
-        proposal: u32,
+        proposal_code: String,
+        proposal_number: u32,
         visit: u32,
     ) -> Result<Option<Session>, async_graphql::Error> {
         let database = ctx.data::<DatabaseConnection>()?;
         ctx.data::<OpaClient>()?
             .decide(OpaInput::new(
                 ctx,
-                OpaSessionParameters { proposal, visit },
+                OpaSessionParameters {
+                    proposal: proposal_number,
+                    visit,
+                },
             )?)
             .await?;
         info!("Retrieving session");
@@ -103,8 +107,9 @@ impl Query {
             .find_also_related(proposal::Entity)
             .filter(
                 Condition::all()
-                    .add(bl_session::Column::VisitNumber.eq(visit))
-                    .add(proposal::Column::ProposalNumber.eq(proposal)),
+                    .add(proposal::Column::ProposalCode.eq(proposal_code))
+                    .add(proposal::Column::ProposalNumber.eq(proposal_number))
+                    .add(bl_session::Column::VisitNumber.eq(visit)),
             )
             .one(database)
             .await?
