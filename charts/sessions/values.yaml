@@ -10,6 +10,20 @@ sessions:
   otelCollectorUrl: http://federation-opentelemetry-collector:4317
   opa:
     url: http://{{ .Release.Name }}-opa-opa
+  affinity:
+    podAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchExpressions:
+              - key: app.kubernetes.io/instance
+                operator: In
+                values:
+                  - ispyb
+              - key: app.kubernetes.io/name
+                operator: In
+                values:
+                  - mariadb-galera
+          topologyKey: kubernetes.io/hostname
 
 opa:
   opa:
@@ -51,3 +65,13 @@ opa:
     extraEnv:
       - name: JWKS_ENDPOINT
         value: https://authn.diamond.ac.uk/realms/master/protocol/openid-connect/certs
+  affinity:
+    podAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchExpressions:
+              - key: app.kubernetes.io/name
+                operator: In
+                values:
+                  - sessions
+          topologyKey: kubernetes.io/hostname
