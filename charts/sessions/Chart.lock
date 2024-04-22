@@ -4,6 +4,6 @@ dependencies:
   version: 0.1.0
 - name: opa
   repository: oci://ghcr.io/diamondlightsource/authz-opa
-  version: 0.1.2
-digest: sha256:9ad800fa04a497872d62359d054e3047013b14e788c1f2cb70934b4fb858945a
-generated: "2024-03-27T17:59:08.471985688Z"
+  version: 0.2.2
+digest: sha256:42b384ee47797e037371b58f16f190a9641ba8da998e10b8eb8d21989ac2fd6e
+generated: "2024-04-22T13:22:13.3265858+01:00"

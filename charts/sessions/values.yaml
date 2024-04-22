@@ -14,6 +14,11 @@ sessions:
 opa:
   opa:
     enabled: true
+    orgData:
+      enabled: true
+      bundlerSecret:
+        name: "{{ .Release.Name }}-bundler"
+        key: bearer-token
     configOverride:
       decision_logs:
         console: true

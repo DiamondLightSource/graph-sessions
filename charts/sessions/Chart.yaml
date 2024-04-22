@@ -3,13 +3,13 @@ name: sessions
 description: A deployment providing beamline session information as part of the graph federation
 type: application
 
-version: 0.2.0
+version: 0.3.0
 
 dependencies:
   - name: sessions
     version: 0.1.0
     condition: sessions.enabled
   - name: opa
-    version: 0.1.2
+    version: 0.2.2
     repository: oci://ghcr.io/diamondlightsource/authz-opa
     condition: opa.enabled
