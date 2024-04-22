@@ -22,7 +22,7 @@ jobs:
       DATABASE_URL: mysql://root:rootpassword@localhost:3306/ispyb_build
     steps:
       - name: Checkout source
-        uses: actions/checkout@v4.1.2
+        uses: actions/checkout@v4.1.3
 
       - name: Install stable toolchain
         uses: actions-rs/toolchain@v1.0.7
@@ -42,7 +42,7 @@ jobs:
             --path sessions.graphql
 
       - name: Upload Schema Artifact
-        uses: actions/upload-artifact@v4.3.1
+        uses: actions/upload-artifact@v4.3.3
         with:
           name: sessions.graphql
           path: sessions.graphql
@@ -60,7 +60,7 @@ jobs:
           echo "$HOME/.rover/bin" >> $GITHUB_PATH
 
       - name: Download Schema Artifact
-        uses: actions/download-artifact@v4.1.4
+        uses: actions/download-artifact@v4.1.6
         with:
           name: sessions.graphql
 
