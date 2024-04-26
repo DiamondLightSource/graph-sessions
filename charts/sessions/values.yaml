@@ -75,3 +75,12 @@ opa:
                 values:
                   - sessions
           topologyKey: kubernetes.io/hostname
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchExpressions:
+              - key: app.kubernetes.io/name
+                operator: In
+                values:
+                  - opa-opa
+          topologyKey: kubernetes.io/hostname
