@@ -4,16 +4,16 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-anyhow = { version = "1.0.81" }
-async-graphql = { version = "7.0.3", default-features = false, features = [
+anyhow = { version = "1.0.86" }
+async-graphql = { version = "7.0.5", default-features = false, features = [
     "chrono",
     "graphiql",
 ] }
-async-graphql-axum = { version = "7.0.3" }
+async-graphql-axum = { version = "7.0.5" }
 axum = { version = "0.7.5" }
 axum-extra = { version = "0.9.3", features = ["typed-header"] }
-axum-tracing-opentelemetry = { version = "0.18.0" }
-chrono = { version = "0.4.37" }
+axum-tracing-opentelemetry = { version = "0.18.1" }
+chrono = { version = "0.4.38" }
 clap = { version = "4.5.4", features = ["derive", "env"] }
 dotenvy = { version = "0.15.7" }
 models = { path = "../models" }
@@ -27,7 +27,7 @@ reqwest = { version = "0.11.27", default-features = false, features = [
     "json",
 ] }
 sea-orm = { workspace = true }
-serde = { version = "1.0.197", features = ["derive"] }
+serde = { version = "1.0.202", features = ["derive"] }
 tokio = { version = "1.37.0", features = ["macros", "rt-multi-thread"] }
 tracing = { version = "0.1.40" }
 tracing-opentelemetry = { version = "0.23.0" }
@@ -35,4 +35,4 @@ tracing-subscriber = { version = "0.3.18" }
 url = { version = "2.5.0" }
 
 [build-dependencies]
-built = { version = "0.7.1" }
+built = { version = "0.7.2" }
