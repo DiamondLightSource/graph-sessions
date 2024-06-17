@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source
-        uses: actions/checkout@v4.1.2
+        uses: actions/checkout@v4.1.7
 
       - name: Setup Regal
         uses: StyraInc/setup-regal@v1.0.0
@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source
-        uses: actions/checkout@v4.1.2
+        uses: actions/checkout@v4.1.7
 
       - name: Setup OPA
         uses: open-policy-agent/setup-opa@v2.2.0
@@ -49,13 +49,13 @@ jobs:
       packages: write
     steps:
       - name: Checkout source
-        uses: actions/checkout@v4.1.2
+        uses: actions/checkout@v4.1.7
 
       - name: Generate Image Name
         run: echo IMAGE_REPOSITORY=ghcr.io/$(echo "${{ github.repository }}-policy" | tr '[:upper:]' '[:lower:]' | tr '[_]' '[\-]') >> $GITHUB_ENV
 
       - name: Log in to GitHub Docker Registry
-        uses: docker/login-action@v3.1.0
+        uses: docker/login-action@v3.2.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
